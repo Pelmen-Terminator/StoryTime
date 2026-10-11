@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StoryTime — студия историй: генераторы и редактор проектов с иерархией.">
-  <title>StoryTime — студия историй v1.2</title>
+  <title>StoryTime — студия историй v1.3</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -15,7 +15,7 @@
     <div class="logo">
       <span class="logo-icon">📖</span>
       <h1>Story<span>Time</span></h1>
-      <span class="version">v1.2</span>
+      <span class="version">v1.3</span>
     </div>
 
     <div class="header-right">
@@ -25,6 +25,10 @@
         <button class="theme-btn" data-theme="light" title="Светлая">☀️</button>
         <button class="theme-btn" data-theme="beige" title="Бежевая">📜</button>
         <button class="theme-btn active" data-theme="dark" title="Тёмная">🌙</button>
+        <button class="theme-btn" data-theme="navy" title="Тёмно-синяя">🔵</button>
+        <button class="theme-btn" data-theme="green" title="Тёмно-зелёная">🟢</button>
+        <button class="theme-btn" data-theme="red" title="Тёмно-красная">🔴</button>
+        <button class="theme-btn" data-theme="purple" title="Тёмно-фиолетовая">🟣</button>
       </div>
     </div>
   </header>
@@ -131,11 +135,12 @@
       </div>
       <div class="row-actions"><button class="btn primary" id="pb-save">💾 В библиотеку</button><button class="btn ghost" id="pb-to-project">📥 В проект</button><button class="btn ghost" id="pb-load-last">↺ Загрузить последнее</button><button class="btn ghost" id="pb-clear">Очистить</button></div>
       <div class="row-actions template-row"><span>Шаблоны:</span><button class="btn ghost small" data-template="three-act">Трёхактная структура</button><button class="btn ghost small" data-template="mystery">Детектив</button><button class="btn ghost small" data-template="quest">Приключение</button></div>
+      <div class="writing-prompt-card"><div><h3>Писательская разминка</h3><p id="writing-prompt">Нажми кнопку, чтобы получить короткое упражнение или стартовую идею.</p></div><button class="btn ghost" id="new-writing-prompt">🎲 Новая идея</button></div>
     </section>
 
     <section class="panel" id="plot" role="tabpanel">
       <div class="panel-head"><div><h2>Генератор сюжета</h2><p class="subtitle">Создай основу истории, затем доработай её в редакторе.</p></div><button class="btn ghost small" data-help="plot">❓ Помощь</button></div>
-      <div class="controls"><label>Жанр<select id="plot-genre"></select></label><label>Тон<select id="plot-tone"><option value="any">🎲 Любой</option><option>Мрачный</option><option>Оптимистичный</option><option>Ироничный</option><option>Эпический</option><option>Меланхоличный</option><option>Реалистичный</option><option>Тревожный</option><option>Абсурдный</option></select></label><button class="btn primary" id="gen-plot">🎲 Создать сюжет</button><button class="btn ghost" id="reroll-plot">↻ Ещё вариант</button></div>
+      <div class="controls"><label>Жанр<select id="plot-genre"></select></label><label>Тон<select id="plot-tone"><option value="any">🎲 Любой</option><option>Мрачный</option><option>Оптимистичный</option><option>Ироничный</option><option>Эпический</option><option>Меланхоличный</option><option>Реалистичный</option><option>Тревожный</option><option>Абсурдный</option></select></label><button class="btn primary" id="gen-plot">🎲 Создать сюжет</button></div>
       <div class="output" id="plot-output">Здесь появится сюжет…</div><div class="row-actions"><button class="btn primary" id="save-plot">💾 Сохранить</button><button class="btn ghost" id="send-plot-to-project">📥 В проект</button></div>
     </section>
 
@@ -147,7 +152,7 @@
 
     <section class="panel" id="world" role="tabpanel">
       <div class="panel-head"><div><h2>Генератор мира</h2><p class="subtitle">Общество, политика, магия, экономика и конфликт.</p></div><button class="btn ghost small" data-help="world">❓ Помощь</button></div>
-      <div class="controls"><button class="btn primary" id="gen-world">🌍 Создать мир</button><button class="btn ghost" id="reroll-world">↻ Другой мир</button></div><div class="output" id="world-output">Здесь появится описание мира…</div><div class="row-actions"><button class="btn primary" id="save-world">💾 Сохранить</button><button class="btn ghost" id="send-world-to-project">📥 В проект</button></div>
+      <div class="controls"><button class="btn primary" id="gen-world">🌍 Создать мир</button></div><div class="output" id="world-output">Здесь появится описание мира…</div><div class="row-actions"><button class="btn primary" id="save-world">💾 Сохранить</button><button class="btn ghost" id="send-world-to-project">📥 В проект</button></div>
     </section>
 
     <section class="panel" id="creature" role="tabpanel">
@@ -172,7 +177,8 @@
   </main>
 
   <footer class="footer">
-    <p>StoryTime v1.2 · Создано с ❤️ для писателей · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
+    <p>StoryTime v1.3 · Автор StoryTime: <strong>Zero/Pelmen_4000</strong></p>
+    <p><a href="history.html">История обновлений</a> · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

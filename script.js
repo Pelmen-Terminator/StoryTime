@@ -1,5 +1,5 @@
 // ============================================================
-// StoryTime v1.2 — полная логика приложения
+// StoryTime v1.3 — полная логика приложения
 // ============================================================
 'use strict';
 
@@ -33,7 +33,7 @@ function debounce(fn, ms) {
 // ============================================================
 (function initTheme() {
   const savedTheme = localStorage.getItem('storytime-theme') || 'dark';
-  const valid = ['light', 'beige', 'dark'];
+  const valid = ['light', 'beige', 'dark', 'navy', 'green', 'red', 'purple'];
   const theme = valid.includes(savedTheme) ? savedTheme : 'dark';
   document.documentElement.dataset.theme = theme;
 
@@ -326,7 +326,10 @@ function genPlot() {
   $('plot-output').textContent = lastPlot;
 }
 $('gen-plot')?.addEventListener('click', genPlot);
-$('reroll-plot')?.addEventListener('click', genPlot);
+$('new-writing-prompt')?.addEventListener('click', () => {
+  const el = $('writing-prompt');
+  if (el) el.textContent = rnd(DATA.writingPrompts) || 'Добавь собственную идею в базу.';
+});
 $('save-plot')?.addEventListener('click', () => {
   if (!lastPlot) return toast('Сначала сгенерируй сюжет');
   saveItem('Сюжет', lastPlot);
@@ -426,7 +429,6 @@ function genWorld() {
   $('world-output').textContent = lastWorld;
 }
 $('gen-world')?.addEventListener('click', genWorld);
-$('reroll-world')?.addEventListener('click', genWorld);
 $('save-world')?.addEventListener('click', () => {
   if (!lastWorld) return toast('Сначала сгенерируй мир');
   saveItem('Мир', lastWorld);

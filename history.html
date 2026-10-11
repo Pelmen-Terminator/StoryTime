@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="История обновлений StoryTime — изменения, новые функции и улучшения.">
+  <title>История обновлений — StoryTime</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+  <main class="history-page">
+    <div class="history-top">
+      <div class="logo"><span class="logo-icon">📖</span><h1>Story<span>Time</span></h1><span class="version">v1.3</span></div>
+      <a class="btn ghost" href="index.html">← Вернуться в StoryTime</a>
+    </div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:8px">История обновлений</h1>
+    <p class="history-note">Список основных изменений по версиям.</p>
+    <article class="history-card">
+      <span class="history-version">v1.3 · Текущая версия</span>
+      <h2>Удобство, оформление и расширение базы</h2>
+      <ul>
+        <li>Добавлена отдельная страница истории обновлений.</li>
+        <li>Добавлены четыре цветовые темы: тёмно-синяя, тёмно-зелёная, тёмно-красная и тёмно-фиолетовая.</li>
+        <li>Удалены отдельные кнопки повторной генерации там, где они полностью дублировали основную кнопку.</li>
+        <li>Добавлены новые жанры: ужасы, комедия, историческая проза, приключения, политическая драма, экологическая фантастика, психологическая драма, мистика и ограбление/афера.</li>
+        <li>Добавлен набор писательских подсказок для разминки и поиска идеи.</li>
+        <li>Внизу сайта указано авторство: Zero/Pelmen_4000.</li>
+        <li>Улучшена адаптация выбора темы и страницы обновлений для небольших экранов.</li>
+      </ul>
+    </article>
+    <article class="history-card">
+      <span class="history-version">v1.2</span>
+      <h2>Конструктор и расширение жанров</h2>
+      <ul>
+        <li>Добавлен пошаговый конструктор сюжета из шести этапов с индикатором прогресса.</li>
+        <li>Добавлены шаблоны структуры сюжета и новые жанровые заготовки.</li>
+        <li>Улучшены адаптивность интерфейса, подсветка фокуса и поведение при пустых данных.</li>
+        <li>Добавлены проверки при импорте JSON и обновлена документация.</li>
+      </ul>
+    </article>
+    <article class="history-card">
+      <span class="history-version">До v1.2</span>
+      <h2>Базовые возможности</h2>
+      <p>В ранней версии сформирована основа StoryTime: проекты с разделами, генераторы сюжетов, персонажей, миров, существ, локаций и имён, библиотека сохранённых результатов, шаблоны проектов и локальное сохранение.</p>
+    </article>
+    <footer class="footer"><p>Автор StoryTime: <strong>Zero/Pelmen_4000</strong></p><p><a href="index.html">На главную</a></p></footer>
+  </main>
+  <script>
+    (() => {
+      const valid = ['light','beige','dark','navy','green','red','purple'];
+      let theme = 'dark';
+      try { const stored = localStorage.getItem('storytime-theme'); if (valid.includes(stored)) theme = stored; } catch (_) {}
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+</body>
+</html>
