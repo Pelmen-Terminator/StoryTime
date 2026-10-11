@@ -763,3 +763,132 @@ select { cursor: pointer; min-width: 140px; }
   .container { padding: 12px; }
   .panel h2 { font-size: 1.5rem; }
 }
+/* ============ v1.2 — дополнения ============ */
+
+.panel-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.panel-head .subtitle { margin-bottom: 0; }
+
+/* Кнопка помощи в шапке */
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+/* Sidebar в проектах */
+.projects-sidebar .btn + .btn { margin-top: 6px; }
+
+/* Пустое состояние — быстрые шаблоны */
+.empty-actions {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  margin-top: 16px;
+}
+
+/* Действия в дереве */
+.tree-actions { display: flex; gap: 4px; }
+
+/* Селектор типа узла */
+.node-type-select {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  outline: none;
+  min-width: 120px;
+}
+.node-type-select:focus { border-color: var(--accent); }
+
+/* Дерево — вложенность */
+.tree-node[data-depth="1"] { margin-left: 18px; }
+.tree-node[data-depth="2"] { margin-left: 36px; }
+.tree-node[data-depth="3"] { margin-left: 54px; }
+.tree-node .icon {
+  font-size: 0.95rem;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Help-панель */
+.help-panel {
+  position: fixed;
+  top: 0; right: 0;
+  height: 100vh;
+  width: 340px;
+  max-width: 90vw;
+  background: var(--bg-2);
+  border-left: 1px solid var(--border);
+  transform: translateX(105%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  z-index: 150;
+  padding: 24px;
+  overflow-y: auto;
+  box-shadow: -20px 0 60px rgba(0,0,0,0.4);
+}
+.help-panel.show { transform: translateX(0); }
+.help-panel h3 {
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+}
+.help-panel p { line-height: 1.7; color: var(--text); font-size: 0.95rem; }
+.help-close {
+  position: absolute; top: 16px; right: 16px;
+  background: transparent; border: none;
+  font-size: 1.2rem; cursor: pointer; color: var(--muted);
+}
+.help-close:hover { color: var(--text); }
+
+/* Onboarding */
+.onboarding { max-width: 520px; }
+.onboarding p { margin-bottom: 16px; line-height: 1.6; }
+.onboarding-list {
+  list-style: none; padding: 0; margin: 0 0 20px 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.onboarding-list li {
+  padding: 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.92rem;
+}
+
+/* Кнопка-подсказка */
+[data-help] {
+  font-size: 0.82rem;
+  padding: 6px 12px;
+}
+
+/* ============ v1.2 — редакторские улучшения ============ */
+.progress-wrap { margin: 0 0 22px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.progress-track { height: 8px; background: var(--bg-3); border-radius: 20px; overflow: hidden; margin-bottom: 8px; }
+#pb-progress-fill { height: 100%; width: 0; background: var(--grad); border-radius: inherit; transition: width .25s ease; }
+#pb-progress-text { color: var(--muted); }
+.pb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.pb-step { padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; transition: border-color .2s, background .2s; }
+.pb-step.filled { border-color: var(--accent); }
+.pb-step label { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 700; margin-bottom: 10px; }
+.pb-step textarea { width: 100%; min-height: 125px; resize: vertical; line-height: 1.6; }
+.template-row { margin-top: 14px; align-items: center; }
+.template-row > span { color: var(--muted); font-size: .9rem; }
+#saved-list { display: grid; gap: 12px; }
+.saved-item { overflow-wrap: anywhere; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent-3); outline-offset: 2px; }
+button:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
+@media (max-width: 760px) {
+  .pb-grid { grid-template-columns: 1fr; }
+  .projects-layout { grid-template-columns: 1fr; }
+  .header { flex-wrap: wrap; gap: 12px; }
+  .header-right { flex-wrap: wrap; }
+  .container { padding: 12px; }
+  .panel h2 { font-size: 1.55rem; }
+  .controls label { width: 100%; }
+  .controls select, .controls input { width: 100%; }
+  .row-actions .btn { flex: 1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
