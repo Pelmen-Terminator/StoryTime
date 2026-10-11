@@ -32,19 +32,30 @@ function debounce(fn, ms) {
 // ТЕМА
 // ============================================================
 (function initTheme() {
-  const savedTheme = localStorage.getItem('storytime-theme') || 'dark';
   const valid = ['light', 'beige', 'dark', 'navy', 'green', 'red', 'purple'];
-  const theme = valid.includes(savedTheme) ? savedTheme : 'dark';
-  document.documentElement.dataset.theme = theme;
+  let savedTheme = 'dark';
+  // На мобильных браузерах/в приватном режиме localStorage иногда недоступен.
+  try {
+    const stored = localStorage.getItem('storytime-theme');
+    if (stored && valid.includes(stored)) savedTheme = stored;
+  } catch (_) {}
 
-  document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.theme === theme);
-    btn.addEventListener('click', () => {
-      const t = btn.dataset.theme;
-      document.documentElement.dataset.theme = t;
-      localStorage.setItem('storytime-theme', t);
-      document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b === btn));
+  function applyTheme(theme, persist = true) {
+    const safeTheme = valid.includes(theme) ? theme : 'dark';
+    document.documentElement.dataset.theme = safeTheme;
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      const active = btn.dataset.theme === safeTheme;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
+    if (persist) {
+      try { localStorage.setItem('storytime-theme', safeTheme); } catch (_) {}
+    }
+  }
+
+  applyTheme(savedTheme, false);
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
   });
 })();
 
@@ -129,15 +140,33 @@ function promptModal(title, fields) {
 // ВКЛАДКИ
 // ============================================================
 (function initTabs() {
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      const panel = $(tab.dataset.tab);
-      if (panel) panel.classList.add('active');
+  const tabs = [...document.querySelectorAll('.tab[data-tab]')];
+  function activateTab(id, updateHash = true) {
+    const tab = tabs.find(item => item.dataset.tab === id);
+    const panel = $(id);
+    if (!tab || !panel) return;
+    tabs.forEach(item => {
+      const active = item === tab;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-selected', active ? 'true' : 'false');
+      item.setAttribute('tabindex', active ? '0' : '-1');
+    });
+    document.querySelectorAll('.panel').forEach(item => item.classList.toggle('active', item === panel));
+    if (updateHash) {
+      try { history.replaceState(null, '', `#${id}`); } catch (_) {}
+    }
+  }
+  tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.tab)));
+  document.querySelectorAll('[data-open-tab="updates"]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      activateTab('updates');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+  const initial = location.hash.slice(1);
+  if (tabs.some(tab => tab.dataset.tab === initial)) activateTab(initial, false);
+  else activateTab('projects', false);
 })();
 
 // ============================================================

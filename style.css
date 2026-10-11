@@ -952,3 +952,39 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none !important;
 .writing-prompt-card h3 { font-size:1.05rem; margin-bottom:7px; }
 .writing-prompt-card p { color:var(--muted); line-height:1.65; }
 @media (max-width:600px) { .writing-prompt-card { align-items:stretch; flex-direction:column; } }
+
+
+/* v1.3.1 — мобильная адаптация и встроенная история */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+button, a, select { touch-action: manipulation; }
+.theme-switch { display: grid; grid-template-columns: repeat(7, minmax(36px, 1fr)); gap: 5px; width: 100%; max-width: 390px; }
+.theme-btn { min-width: 36px; min-height: 40px; padding: 7px; display: inline-flex; align-items: center; justify-content: center; }
+.history-card h3 { margin: 4px 0 8px; font-size: 1.05rem; }
+.history-card li { overflow-wrap: anywhere; }
+.tab[aria-selected="true"] { outline-offset: -3px; }
+@media (max-width: 760px) {
+  .header { align-items: flex-start; }
+  .header-right { width: 100%; display: grid; grid-template-columns: 42px 42px minmax(0, 1fr); align-items: start; gap: 8px; }
+  .theme-switch { grid-column: 3; grid-row: 1; max-width: none; grid-template-columns: repeat(4, minmax(38px, 1fr)); }
+  .header-right > .icon-btn { min-height: 42px; min-width: 42px; }
+  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 8px; }
+  .tab { flex: 0 0 auto; min-height: 42px; white-space: nowrap; }
+  .history-page { padding: 16px 12px 32px; }
+  .history-card { padding: 16px; }
+}
+@media (max-width: 420px) {
+  .header { padding: 14px 12px 8px; }
+  .logo { flex-wrap: wrap; }
+  .logo h1 { font-size: 1.25rem; }
+  .header-right { grid-template-columns: 38px 38px minmax(0, 1fr); gap: 6px; }
+  .theme-switch { grid-template-columns: repeat(4, minmax(30px, 1fr)); gap: 4px; }
+  .theme-btn { min-width: 30px; min-height: 38px; padding: 5px 2px; }
+  .container { padding: 10px; }
+  .row-actions { gap: 6px; }
+  .row-actions .btn { min-width: 0; }
+  .panel-head { gap: 10px; }
+  .panel-head > button { max-width: 100%; }
+}
+@media (hover: none) {
+  .tab:hover, .theme-btn:hover { transform: none; }
+}

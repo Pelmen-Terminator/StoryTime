@@ -22,13 +22,13 @@
       <button class="icon-btn" id="help-btn" title="Помощь">❓</button>
       <button class="icon-btn" id="backup-btn" title="Резервные копии">📦</button>
       <div class="theme-switch" id="theme-switch" role="group" aria-label="Тема">
-        <button class="theme-btn" data-theme="light" title="Светлая">☀️</button>
-        <button class="theme-btn" data-theme="beige" title="Бежевая">📜</button>
-        <button class="theme-btn active" data-theme="dark" title="Тёмная">🌙</button>
-        <button class="theme-btn" data-theme="navy" title="Тёмно-синяя">🔵</button>
-        <button class="theme-btn" data-theme="green" title="Тёмно-зелёная">🟢</button>
-        <button class="theme-btn" data-theme="red" title="Тёмно-красная">🔴</button>
-        <button class="theme-btn" data-theme="purple" title="Тёмно-фиолетовая">🟣</button>
+        <button class="theme-btn" data-theme="light" title="Светлая" aria-label="Светлая тема">☀️</button>
+        <button class="theme-btn" data-theme="beige" title="Бежевая" aria-label="Бежевая тема">📜</button>
+        <button class="theme-btn active" data-theme="dark" title="Тёмная" aria-label="Тёмная тема">🌙</button>
+        <button class="theme-btn" data-theme="navy" title="Тёмно-синяя" aria-label="Тёмно-синяя тема">🔵</button>
+        <button class="theme-btn" data-theme="green" title="Тёмно-зелёная" aria-label="Тёмно-зелёная тема">🟢</button>
+        <button class="theme-btn" data-theme="red" title="Тёмно-красная" aria-label="Тёмно-красная тема">🔴</button>
+        <button class="theme-btn" data-theme="purple" title="Тёмно-фиолетовая" aria-label="Тёмно-фиолетовая тема">🟣</button>
       </div>
     </div>
   </header>
@@ -43,6 +43,7 @@
     <button class="tab" data-tab="location" role="tab">🗺 Локация</button>
     <button class="tab" data-tab="names" role="tab">✨ Имена</button>
     <button class="tab" data-tab="saved" role="tab">💾 Библиотека</button>
+    <button class="tab" id="updates-tab" data-tab="updates" role="tab" aria-controls="updates">🕘 Обновления</button>
   </nav>
 
   <main class="container">
@@ -174,11 +175,45 @@
       <div class="panel-head"><div><h2>Библиотека</h2><p class="subtitle">Сохранённые идеи и результаты генераторов.</p></div><button class="btn ghost small" data-help="saved">❓ Помощь</button></div>
       <div class="controls"><label>Поиск<input id="search-saved" class="search-input" type="text" placeholder="Найти в библиотеке…"></label><label>Тип<select id="filter-saved"><option value="all">Все материалы</option><option value="Сюжет">Сюжеты</option><option value="Персонаж">Персонажи</option><option value="Мир">Миры</option><option value="Существо">Существа</option><option value="Локация">Локации</option><option value="Имена">Имена</option><option value="Конструктор">Конструктор</option></select></label><button class="btn ghost" id="export-json">⬇ Экспорт JSON</button><button class="btn ghost" id="import-json">⬆ Импорт JSON</button><input type="file" id="import-file" accept=".json,application/json" hidden><button class="btn danger" id="clear-all">Очистить библиотеку</button></div><div id="saved-list"></div>
     </section>
+
+    <section class="panel" id="updates" role="tabpanel" aria-labelledby="updates-tab">
+      <div class="panel-head"><div><h2>История обновлений</h2><p class="subtitle">Основные изменения StoryTime по версиям.</p></div></div>
+      <article class="history-card">
+        <span class="history-version">v1.3 · Текущая версия</span>
+        <h3>Больше возможностей и настройки оформления</h3>
+        <ul>
+          <li>Добавлены тёмно-синяя, тёмно-зелёная, тёмно-красная и тёмно-фиолетовая темы.</li>
+          <li>Расширена база жанров и добавлена писательская разминка «Новая идея».</li>
+          <li>Убраны дублирующие кнопки и улучшена адаптация интерфейса.</li>
+          <li>Добавлено авторство: Zero/Pelmen_4000.</li>
+          <li>История обновлений теперь доступна прямо внутри сайта.</li>
+        </ul>
+      </article>
+      <article class="history-card">
+        <span class="history-version">v1.2</span>
+        <h3>Конструктор и удобство работы</h3>
+        <ul>
+          <li>Добавлен пошаговый конструктор сюжета и шаблоны.</li>
+          <li>Улучшены адаптация для небольших экранов, фокус клавиатуры и поддержка уменьшения анимации.</li>
+          <li>Добавлены проверки при импорте JSON и обновлена документация.</li>
+        </ul>
+      </article>
+      <article class="history-card">
+        <span class="history-version">До v1.2</span>
+        <h3>Основные возможности</h3>
+        <ul>
+          <li>Проекты с главами и вложенными разделами.</li>
+          <li>Генераторы сюжетов, персонажей, миров, существ, локаций и имён.</li>
+          <li>Библиотека идей, сохранение в браузере и импорт/экспорт данных.</li>
+        </ul>
+      </article>
+      <p class="history-note">История описывает основные изменения, а не каждую небольшую правку.</p>
+    </section>
   </main>
 
   <footer class="footer">
     <p>StoryTime v1.3 · Автор StoryTime: <strong>Zero/Pelmen_4000</strong></p>
-    <p><a href="history.html">История обновлений</a> · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
+    <p><a href="#updates" data-open-tab="updates">История обновлений</a> · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
