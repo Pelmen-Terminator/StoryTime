@@ -3,55 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StoryTime — студия историй</title>
+  <meta name="description" content="StoryTime — студия историй: генераторы сюжетов, персонажей, миров и полноценный редактор проектов.">
+  <title>StoryTime — студия историй v1.1</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="bg-layer"></div>
+  <div class="bg-layer" aria-hidden="true"></div>
 
   <header class="header">
     <div class="logo">
       <span class="logo-icon">📖</span>
       <h1>Story<span>Time</span></h1>
-      <span class="version">v1.0</span>
+      <span class="version">v1.1</span>
     </div>
 
     <div class="header-right">
-      <div class="theme-switch" id="theme-switch">
-        <button class="theme-btn" data-theme="light" title="Светлая">☀️</button>
-        <button class="theme-btn" data-theme="beige" title="Бежевая">📜</button>
-        <button class="theme-btn active" data-theme="dark" title="Тёмная">🌙</button>
+      <div class="theme-switch" id="theme-switch" role="group" aria-label="Тема оформления">
+        <button class="theme-btn" data-theme="light" title="Светлая" aria-label="Светлая тема">☀️</button>
+        <button class="theme-btn" data-theme="beige" title="Бежевая" aria-label="Бежевая тема">📜</button>
+        <button class="theme-btn active" data-theme="dark" title="Тёмная" aria-label="Тёмная тема">🌙</button>
       </div>
     </div>
   </header>
 
-  <nav class="tabs">
-    <button class="tab active" data-tab="projects">🗂 Проекты</button>
-    <button class="tab" data-tab="plot">🎬 Сюжет</button>
-    <button class="tab" data-tab="character">👤 Персонаж</button>
-    <button class="tab" data-tab="world">🌍 Мир</button>
-    <button class="tab" data-tab="creature">🐉 Существо</button>
-    <button class="tab" data-tab="location">🗺 Локация</button>
-    <button class="tab" data-tab="names">✨ Имена</button>
-    <button class="tab" data-tab="saved">💾 Библиотека</button>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="projects" role="tab">🗂 Проекты</button>
+    <button class="tab" data-tab="plotbuilder" role="tab">🎯 Конструктор</button>
+    <button class="tab" data-tab="plot" role="tab">🎬 Сюжет</button>
+    <button class="tab" data-tab="character" role="tab">👤 Персонаж</button>
+    <button class="tab" data-tab="world" role="tab">🌍 Мир</button>
+    <button class="tab" data-tab="creature" role="tab">🐉 Существо</button>
+    <button class="tab" data-tab="location" role="tab">🗺 Локация</button>
+    <button class="tab" data-tab="names" role="tab">✨ Имена</button>
+    <button class="tab" data-tab="saved" role="tab">💾 Библиотека</button>
   </nav>
 
   <main class="container">
 
-    <!-- ================= ПРОЕКТЫ (редактор) ================= -->
-    <section class="panel active" id="projects">
+    <!-- ================= ПРОЕКТЫ ================= -->
+    <section class="panel active" id="projects" role="tabpanel">
       <h2>Мои проекты</h2>
-      <p class="subtitle">Создавай свои истории: главы, акты, персонажей, локации — всё в одном месте.</p>
+      <p class="subtitle">Создавай истории с главами, персонажами, локациями — всё структурировано.</p>
 
       <div class="projects-layout">
-        <!-- Боковая панель с проектами -->
         <aside class="projects-sidebar">
           <button class="btn primary full" id="new-project">➕ Новый проект</button>
           <div class="project-list" id="project-list"></div>
         </aside>
 
-        <!-- Рабочая область -->
         <div class="editor-area" id="editor-area">
           <div class="empty-state" id="editor-empty">
             <div class="empty-icon">📚</div>
@@ -61,15 +61,17 @@
 
           <div class="editor-content" id="editor-content" style="display:none;">
             <div class="editor-header">
-              <input type="text" id="project-title" class="project-title-input" placeholder="Название проекта…">
+              <input type="text" id="project-title" class="project-title-input" placeholder="Название проекта…" aria-label="Название проекта">
               <div class="editor-actions">
-                <button class="btn ghost small" id="rename-project">💾 Сохранить</button>
+                <button class="btn ghost small" id="project-stats" title="Статистика">📊</button>
+                <button class="btn ghost small" id="export-project" title="Экспорт проекта в JSON">⬇</button>
                 <button class="btn danger small" id="delete-project">🗑 Удалить</button>
               </div>
             </div>
 
+            <div class="project-progress" id="project-progress"></div>
+
             <div class="editor-body">
-              <!-- Дерево разделов -->
               <aside class="chapter-tree">
                 <div class="tree-header">
                   <span>Структура</span>
@@ -78,14 +80,17 @@
                 <div id="chapter-tree"></div>
               </aside>
 
-              <!-- Поле для текста -->
               <div class="editor-pane">
-                <input type="text" id="node-title" class="node-title-input" placeholder="Заголовок раздела…">
+                <div class="node-topbar">
+                  <span class="node-icon-display" id="node-icon-display">📖</span>
+                  <input type="text" id="node-title" class="node-title-input" placeholder="Заголовок раздела…" aria-label="Заголовок раздела">
+                </div>
                 <div class="node-meta" id="node-meta"></div>
-                <textarea id="node-content" class="node-content" placeholder="Начни писать свою историю…"></textarea>
+                <textarea id="node-content" class="node-content" placeholder="Начни писать свою историю…" aria-label="Содержимое раздела"></textarea>
                 <div class="node-footer">
                   <span id="word-count">0 слов</span>
                   <span id="char-count">0 символов</span>
+                  <span id="save-status" class="save-status">—</span>
                 </div>
               </div>
             </div>
@@ -94,8 +99,113 @@
       </div>
     </section>
 
-    <!-- ================= СЮЖЕТ ================= -->
-    <section class="panel" id="plot">
+    <!-- ================= КОНСТРУКТОР СЮЖЕТА ================= -->
+    <section class="panel" id="plotbuilder" role="tabpanel">
+      <h2>Конструктор сюжета</h2>
+      <p class="subtitle">Пошаговое построение истории по классической структуре.</p>
+
+      <div class="plotbuilder-wrap">
+        <div class="plotbuilder-form">
+          <div class="pb-step" data-step="1">
+            <div class="pb-step-header">
+              <span class="pb-num">1</span>
+              <h3>Экспозиция</h3>
+            </div>
+            <p class="pb-hint">Где и когда происходит действие? Кто главный герой?</p>
+            <textarea id="pb-exposition" placeholder="Например: Тихий городок на берегу моря, 1920-е. Молодой аптекарь Генри..." rows="4"></textarea>
+            <button class="btn ghost small" data-roll="exposition">🎲 Подсказать</button>
+          </div>
+
+          <div class="pb-step" data-step="2">
+            <div class="pb-step-header">
+              <span class="pb-num">2</span>
+              <h3>Завязка</h3>
+            </div>
+            <p class="pb-hint">Какое событие меняет жизнь героя?</p>
+            <textarea id="pb-inciting" placeholder="Например: Генри находит в подвале старую карту с надписью «Не открывай»..." rows="4"></textarea>
+            <button class="btn ghost small" data-roll="inciting">🎲 Подсказать</button>
+          </div>
+
+          <div class="pb-step" data-step="3">
+            <div class="pb-step-header">
+              <span class="pb-num">3</span>
+              <h3>Развитие</h3>
+            </div>
+            <p class="pb-hint">Что герой предпринимает? Кто ему помогает или мешает?</p>
+            <textarea id="pb-rising" placeholder="Генри собирает команду и отправляется в путь..." rows="4"></textarea>
+            <button class="btn ghost small" data-roll="rising">🎲 Подсказать</button>
+          </div>
+
+          <div class="pb-step" data-step="4">
+            <div class="pb-step-header">
+              <span class="pb-num">4</span>
+              <h3>Кризис</h3>
+            </div>
+            <p class="pb-hint">Момент, когда всё идёт не по плану. Герой на грани.</p>
+            <textarea id="pb-crisis" placeholder="Команда предана, карта украдена, Генри ранен..." rows="4"></textarea>
+            <button class="btn ghost small" data-roll="crisis">🎲 Подсказать</button>
+          </div>
+
+          <div class="pb-step" data-step="5">
+            <div class="pb-step-header">
+              <span class="pb-num">5</span>
+              <h3>Кульминация</h3>
+            </div>
+            <p class="pb-hint">Финальная схватка с главной проблемой.</p>
+            <textarea id="pb-climax" placeholder="Генри в одиночку противостоит древнему злу..." rows="4"></textarea>
+            <button class="btn ghost small" data-roll="climax">🎲 Подсказать</button>
+          </div>
+
+          <div class="pb-step" data-step="6">
+            <div class="pb-step-header">
+              <span class="pb-num">6</span>
+              <h3>Развязка</h3>
+            </div>
+            <p class="pb-hint">Что изменилось в герое и мире? Новый баланс.</p>
+            <textarea id="pb-resolution" placeholder="Генри возвращается другим человеком..." rows="4"></textarea>
+            <button class="btn ghost small" data-roll="resolution">🎲 Подсказать</button>
+          </div>
+
+          <div class="pb-actions">
+            <button class="btn primary" id="pb-save">💾 Сохранить в библиотеку</button>
+            <button class="btn ghost" id="pb-to-project">📥 В проект</button>
+            <button class="btn ghost" id="pb-clear">🗑 Очистить</button>
+            <button class="btn ghost" id="pb-load-last">↺ Загрузить последнее</button>
+          </div>
+        </div>
+
+        <aside class="plotbuilder-aside">
+          <h3>Структура</h3>
+          <div class="pb-progress">
+            <div class="pb-progress-bar"><div class="pb-progress-fill" id="pb-progress-fill"></div></div>
+            <p class="pb-progress-text" id="pb-progress-text">0 / 6 шагов заполнено</p>
+          </div>
+
+          <h3>Схема</h3>
+          <div class="pb-diagram" aria-hidden="true">
+            <div class="pb-line"></div>
+            <div class="pb-point" style="left:0%;bottom:10%"><span>1</span></div>
+            <div class="pb-point" style="left:20%;bottom:30%"><span>2</span></div>
+            <div class="pb-point" style="left:45%;bottom:55%"><span>3</span></div>
+            <div class="pb-point" style="left:65%;bottom:45%"><span>4</span></div>
+            <div class="pb-point" style="left:82%;bottom:85%"><span>5</span></div>
+            <div class="pb-point" style="left:100%;bottom:40%"><span>6</span></div>
+          </div>
+          <p class="pb-caption">Классическая драматургическая кривая</p>
+
+          <h3>Шаблоны</h3>
+          <div class="pb-templates">
+            <button class="btn ghost small" data-template="heroes-journey">Путь героя</button>
+            <button class="btn ghost small" data-template="three-acts">Три акта</button>
+            <button class="btn ghost small" data-template="save-the-cat">Save the Cat</button>
+            <button class="btn ghost small" data-template="mystery">Детективная схема</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ================= СЮЖЕТ (генератор) ================= -->
+    <section class="panel" id="plot" role="tabpanel">
       <h2>Генератор сюжета</h2>
       <p class="subtitle">Идея, конфликт, поворот — всё для старта истории.</p>
       <div class="controls">
@@ -118,13 +228,13 @@
         <p class="placeholder">Нажми «Сгенерировать», чтобы получить идею…</p>
       </div>
       <div class="row-actions">
-        <button class="btn ghost" id="save-plot">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="save-plot">💾 В библиотеку</button>
         <button class="btn ghost" id="send-plot-to-project">📥 В проект</button>
       </div>
     </section>
 
     <!-- ================= ПЕРСОНАЖ ================= -->
-    <section class="panel" id="character">
+    <section class="panel" id="character" role="tabpanel">
       <h2>Генератор персонажа</h2>
       <p class="subtitle">Имя, внешность, характер, тайны — полный профиль.</p>
       <div class="controls">
@@ -147,13 +257,13 @@
         <p class="placeholder">Здесь появится твой герой…</p>
       </div>
       <div class="row-actions">
-        <button class="btn ghost" id="save-char">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="save-char">💾 В библиотеку</button>
         <button class="btn ghost" id="send-char-to-project">📥 В проект</button>
       </div>
     </section>
 
     <!-- ================= МИР ================= -->
-    <section class="panel" id="world">
+    <section class="panel" id="world" role="tabpanel">
       <h2>Генератор мира</h2>
       <p class="subtitle">Политика, магия, религия, конфликты.</p>
       <div class="controls">
@@ -164,13 +274,13 @@
         <p class="placeholder">Опиши свой мир или доверься генератору…</p>
       </div>
       <div class="row-actions">
-        <button class="btn ghost" id="save-world">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="save-world">💾 В библиотеку</button>
         <button class="btn ghost" id="send-world-to-project">📥 В проект</button>
       </div>
     </section>
 
     <!-- ================= СУЩЕСТВО ================= -->
-    <section class="panel" id="creature">
+    <section class="panel" id="creature" role="tabpanel">
       <h2>Генератор существ</h2>
       <p class="subtitle">Драконы, духи, мутанты — существа для твоего мира.</p>
       <div class="controls">
@@ -183,13 +293,13 @@
         <p class="placeholder">Здесь появится существо…</p>
       </div>
       <div class="row-actions">
-        <button class="btn ghost" id="save-creature">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="save-creature">💾 В библиотеку</button>
         <button class="btn ghost" id="send-creature-to-project">📥 В проект</button>
       </div>
     </section>
 
     <!-- ================= ЛОКАЦИЯ ================= -->
-    <section class="panel" id="location">
+    <section class="panel" id="location" role="tabpanel">
       <h2>Генератор локаций</h2>
       <p class="subtitle">Города, руины, таверны, храмы.</p>
       <div class="controls">
@@ -202,13 +312,13 @@
         <p class="placeholder">Здесь появится локация…</p>
       </div>
       <div class="row-actions">
-        <button class="btn ghost" id="save-location">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="save-location">💾 В библиотеку</button>
         <button class="btn ghost" id="send-location-to-project">📥 В проект</button>
       </div>
     </section>
 
     <!-- ================= ИМЕНА ================= -->
-    <section class="panel" id="names">
+    <section class="panel" id="names" role="tabpanel">
       <h2>Рандомайзер имён</h2>
       <p class="subtitle">12 культур, тысячи комбинаций.</p>
       <div class="controls">
@@ -236,7 +346,7 @@
     </section>
 
     <!-- ================= БИБЛИОТЕКА ================= -->
-    <section class="panel" id="saved">
+    <section class="panel" id="saved" role="tabpanel">
       <h2>Библиотека материалов</h2>
       <p class="subtitle">Всё, что ты сохранил из генераторов.</p>
       <div class="controls">
@@ -244,6 +354,7 @@
         <select id="filter-saved">
           <option value="all">Все типы</option>
           <option value="Сюжет">Сюжеты</option>
+          <option value="Конструктор">Конструктор</option>
           <option value="Персонаж">Персонажи</option>
           <option value="Мир">Миры</option>
           <option value="Существо">Существа</option>
@@ -261,13 +372,12 @@
   </main>
 
   <footer class="footer">
-    <p>StoryTime v1.0 · Создано с ❤️ для писателей · <a href="https://github.com/" target="_blank">GitHub</a></p>
+    <p>StoryTime v1.1 · Создано с ❤️ для писателей · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
   </footer>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- Модальное окно -->
-  <div class="modal" id="modal">
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
     <div class="modal-content">
       <h3 id="modal-title">Заголовок</h3>
       <div id="modal-body"></div>
