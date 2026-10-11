@@ -1,96 +1,219 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StoryTime — генератор историй</title>
+  <title>StoryTime — студия историй</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+  <div class="bg-layer"></div>
 
   <header class="header">
     <div class="logo">
       <span class="logo-icon">📖</span>
       <h1>Story<span>Time</span></h1>
+      <span class="version">v1.0</span>
     </div>
-    <p class="tagline">Твой творческий помощник для создания историй</p>
+
+    <div class="header-right">
+      <div class="theme-switch" id="theme-switch">
+        <button class="theme-btn" data-theme="light" title="Светлая">☀️</button>
+        <button class="theme-btn" data-theme="beige" title="Бежевая">📜</button>
+        <button class="theme-btn active" data-theme="dark" title="Тёмная">🌙</button>
+      </div>
+    </div>
   </header>
 
   <nav class="tabs">
-    <button class="tab active" data-tab="plot">🎬 Сюжет</button>
+    <button class="tab active" data-tab="projects">🗂 Проекты</button>
+    <button class="tab" data-tab="plot">🎬 Сюжет</button>
     <button class="tab" data-tab="character">👤 Персонаж</button>
     <button class="tab" data-tab="world">🌍 Мир</button>
+    <button class="tab" data-tab="creature">🐉 Существо</button>
+    <button class="tab" data-tab="location">🗺 Локация</button>
     <button class="tab" data-tab="names">✨ Имена</button>
-    <button class="tab" data-tab="saved">💾 Сохранённые</button>
+    <button class="tab" data-tab="saved">💾 Библиотека</button>
   </nav>
 
   <main class="container">
 
-    <!-- СЮЖЕТ -->
-    <section class="panel active" id="plot">
+    <!-- ================= ПРОЕКТЫ (редактор) ================= -->
+    <section class="panel active" id="projects">
+      <h2>Мои проекты</h2>
+      <p class="subtitle">Создавай свои истории: главы, акты, персонажей, локации — всё в одном месте.</p>
+
+      <div class="projects-layout">
+        <!-- Боковая панель с проектами -->
+        <aside class="projects-sidebar">
+          <button class="btn primary full" id="new-project">➕ Новый проект</button>
+          <div class="project-list" id="project-list"></div>
+        </aside>
+
+        <!-- Рабочая область -->
+        <div class="editor-area" id="editor-area">
+          <div class="empty-state" id="editor-empty">
+            <div class="empty-icon">📚</div>
+            <h3>Нет открытого проекта</h3>
+            <p>Выбери проект слева или создай новый, чтобы начать писать.</p>
+          </div>
+
+          <div class="editor-content" id="editor-content" style="display:none;">
+            <div class="editor-header">
+              <input type="text" id="project-title" class="project-title-input" placeholder="Название проекта…">
+              <div class="editor-actions">
+                <button class="btn ghost small" id="rename-project">💾 Сохранить</button>
+                <button class="btn danger small" id="delete-project">🗑 Удалить</button>
+              </div>
+            </div>
+
+            <div class="editor-body">
+              <!-- Дерево разделов -->
+              <aside class="chapter-tree">
+                <div class="tree-header">
+                  <span>Структура</span>
+                  <button class="icon-btn" id="add-node" title="Добавить раздел">＋</button>
+                </div>
+                <div id="chapter-tree"></div>
+              </aside>
+
+              <!-- Поле для текста -->
+              <div class="editor-pane">
+                <input type="text" id="node-title" class="node-title-input" placeholder="Заголовок раздела…">
+                <div class="node-meta" id="node-meta"></div>
+                <textarea id="node-content" class="node-content" placeholder="Начни писать свою историю…"></textarea>
+                <div class="node-footer">
+                  <span id="word-count">0 слов</span>
+                  <span id="char-count">0 символов</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= СЮЖЕТ ================= -->
+    <section class="panel" id="plot">
       <h2>Генератор сюжета</h2>
+      <p class="subtitle">Идея, конфликт, поворот — всё для старта истории.</p>
       <div class="controls">
         <label>Жанр
-          <select id="plot-genre">
+          <select id="plot-genre"><option value="any">🎲 Любой</option></select>
+        </label>
+        <label>Тон
+          <select id="plot-tone">
             <option value="any">Любой</option>
-            <option value="fantasy">Фэнтези</option>
-            <option value="scifi">Sci-Fi</option>
-            <option value="detective">Детектив</option>
-            <option value="romance">Романтика</option>
-            <option value="horror">Хоррор</option>
-            <option value="adventure">Приключения</option>
+            <option value="dark">Мрачный</option>
+            <option value="light">Светлый</option>
+            <option value="epic">Эпический</option>
+            <option value="ironic">Ироничный</option>
           </select>
         </label>
         <button class="btn primary" id="gen-plot">🎲 Сгенерировать</button>
+        <button class="btn ghost" id="reroll-plot">♻️ Ещё раз</button>
       </div>
       <div class="output" id="plot-output">
         <p class="placeholder">Нажми «Сгенерировать», чтобы получить идею…</p>
       </div>
-      <button class="btn ghost" id="save-plot">💾 Сохранить</button>
+      <div class="row-actions">
+        <button class="btn ghost" id="save-plot">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="send-plot-to-project">📥 В проект</button>
+      </div>
     </section>
 
-    <!-- ПЕРСОНАЖ -->
+    <!-- ================= ПЕРСОНАЖ ================= -->
     <section class="panel" id="character">
       <h2>Генератор персонажа</h2>
+      <p class="subtitle">Имя, внешность, характер, тайны — полный профиль.</p>
       <div class="controls">
-        <button class="btn primary" id="gen-char">🎲 Создать персонажа</button>
+        <label>Культура
+          <select id="char-origin"><option value="any">🎲 Любая</option></select>
+        </label>
+        <label>Пол
+          <select id="char-gender">
+            <option value="any">Любой</option>
+            <option value="m">Мужской</option>
+            <option value="f">Женский</option>
+          </select>
+        </label>
+        <label>Архетип
+          <select id="char-archetype"><option value="any">Любой</option></select>
+        </label>
+        <button class="btn primary" id="gen-char">🎲 Создать</button>
       </div>
       <div class="card" id="char-output">
         <p class="placeholder">Здесь появится твой герой…</p>
       </div>
-      <button class="btn ghost" id="save-char">💾 Сохранить</button>
+      <div class="row-actions">
+        <button class="btn ghost" id="save-char">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="send-char-to-project">📥 В проект</button>
+      </div>
     </section>
 
-    <!-- МИР -->
+    <!-- ================= МИР ================= -->
     <section class="panel" id="world">
       <h2>Генератор мира</h2>
+      <p class="subtitle">Политика, магия, религия, конфликты.</p>
       <div class="controls">
         <button class="btn primary" id="gen-world">🎲 Построить мир</button>
+        <button class="btn ghost" id="reroll-world">♻️ Ещё раз</button>
       </div>
       <div class="output" id="world-output">
         <p class="placeholder">Опиши свой мир или доверься генератору…</p>
       </div>
-      <button class="btn ghost" id="save-world">💾 Сохранить</button>
+      <div class="row-actions">
+        <button class="btn ghost" id="save-world">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="send-world-to-project">📥 В проект</button>
+      </div>
     </section>
 
-    <!-- ИМЕНА -->
-    <section class="panel" id="names">
-      <h2>Рандомайзер имён и фамилий</h2>
+    <!-- ================= СУЩЕСТВО ================= -->
+    <section class="panel" id="creature">
+      <h2>Генератор существ</h2>
+      <p class="subtitle">Драконы, духи, мутанты — существа для твоего мира.</p>
       <div class="controls">
-        <label>Происхождение
-          <select id="name-origin">
-            <option value="ru">Русские</option>
-            <option value="en">Английские</option>
-            <option value="fantasy">Фэнтези</option>
-            <option value="japan">Японские</option>
-            <option value="scandi">Скандинавские</option>
-          </select>
+        <label>Тип
+          <select id="creature-type"><option value="any">Любой</option></select>
+        </label>
+        <button class="btn primary" id="gen-creature">🎲 Создать</button>
+      </div>
+      <div class="card" id="creature-output">
+        <p class="placeholder">Здесь появится существо…</p>
+      </div>
+      <div class="row-actions">
+        <button class="btn ghost" id="save-creature">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="send-creature-to-project">📥 В проект</button>
+      </div>
+    </section>
+
+    <!-- ================= ЛОКАЦИЯ ================= -->
+    <section class="panel" id="location">
+      <h2>Генератор локаций</h2>
+      <p class="subtitle">Города, руины, таверны, храмы.</p>
+      <div class="controls">
+        <label>Тип
+          <select id="location-type"><option value="any">Любой</option></select>
+        </label>
+        <button class="btn primary" id="gen-location">🎲 Создать</button>
+      </div>
+      <div class="card" id="location-output">
+        <p class="placeholder">Здесь появится локация…</p>
+      </div>
+      <div class="row-actions">
+        <button class="btn ghost" id="save-location">💾 Сохранить в библиотеку</button>
+        <button class="btn ghost" id="send-location-to-project">📥 В проект</button>
+      </div>
+    </section>
+
+    <!-- ================= ИМЕНА ================= -->
+    <section class="panel" id="names">
+      <h2>Рандомайзер имён</h2>
+      <p class="subtitle">12 культур, тысячи комбинаций.</p>
+      <div class="controls">
+        <label>Культура
+          <select id="name-origin"><option value="any">🎲 Любая</option></select>
         </label>
         <label>Пол
           <select id="name-gender">
@@ -99,32 +222,63 @@
             <option value="f">Женский</option>
           </select>
         </label>
-        <button class="btn primary" id="gen-name">🎲 Имя</button>
+        <label>Тип
+          <select id="name-type">
+            <option value="full">Имя + Фамилия</option>
+            <option value="first">Только имя</option>
+            <option value="nick">Прозвище</option>
+          </select>
+        </label>
+        <button class="btn primary" id="gen-name">🎲 Сгенерировать 9</button>
       </div>
       <div class="names-output" id="names-output"></div>
-      <button class="btn ghost" id="save-name">💾 Сохранить последнее</button>
+      <button class="btn ghost" id="save-names">💾 Сохранить все</button>
     </section>
 
-    <!-- СОХРАНЁННЫЕ -->
+    <!-- ================= БИБЛИОТЕКА ================= -->
     <section class="panel" id="saved">
-      <h2>Сохранённые материалы</h2>
+      <h2>Библиотека материалов</h2>
+      <p class="subtitle">Всё, что ты сохранил из генераторов.</p>
       <div class="controls">
-        <button class="btn danger" id="clear-all">🗑 Очистить всё</button>
-        <button class="btn ghost" id="export-json">⬇ Экспорт JSON</button>
+        <input type="text" id="search-saved" class="search-input" placeholder="🔍 Поиск…">
+        <select id="filter-saved">
+          <option value="all">Все типы</option>
+          <option value="Сюжет">Сюжеты</option>
+          <option value="Персонаж">Персонажи</option>
+          <option value="Мир">Миры</option>
+          <option value="Существо">Существа</option>
+          <option value="Локация">Локации</option>
+          <option value="Имя">Имена</option>
+        </select>
+        <button class="btn danger" id="clear-all">🗑 Очистить</button>
+        <button class="btn ghost" id="export-json">⬇ Экспорт</button>
+        <button class="btn ghost" id="import-json">⬆ Импорт</button>
+        <input type="file" id="import-file" hidden accept=".json">
       </div>
-      <div class="saved-list" id="saved-list">
-        <p class="placeholder">Здесь появятся твои сохранения…</p>
-      </div>
+      <div class="saved-list" id="saved-list"></div>
     </section>
 
   </main>
 
   <footer class="footer">
-    <p>Создано с ❤️ для StoryTime · <a href="https://github.com/" target="_blank">GitHub</a></p>
+    <p>StoryTime v1.0 · Создано с ❤️ для писателей · <a href="https://github.com/" target="_blank">GitHub</a></p>
   </footer>
 
   <div class="toast" id="toast"></div>
 
+  <!-- Модальное окно -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Заголовок</h3>
+      <div id="modal-body"></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="modal-cancel">Отмена</button>
+        <button class="btn primary" id="modal-confirm">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
