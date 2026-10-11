@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StoryTime — генератор историй</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">📖</span>
+      <h1>Story<span>Time</span></h1>
+    </div>
+    <p class="tagline">Твой творческий помощник для создания историй</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="plot">🎬 Сюжет</button>
+    <button class="tab" data-tab="character">👤 Персонаж</button>
+    <button class="tab" data-tab="world">🌍 Мир</button>
+    <button class="tab" data-tab="names">✨ Имена</button>
+    <button class="tab" data-tab="saved">💾 Сохранённые</button>
+  </nav>
+
+  <main class="container">
+
+    <!-- СЮЖЕТ -->
+    <section class="panel active" id="plot">
+      <h2>Генератор сюжета</h2>
+      <div class="controls">
+        <label>Жанр
+          <select id="plot-genre">
+            <option value="any">Любой</option>
+            <option value="fantasy">Фэнтези</option>
+            <option value="scifi">Sci-Fi</option>
+            <option value="detective">Детектив</option>
+            <option value="romance">Романтика</option>
+            <option value="horror">Хоррор</option>
+            <option value="adventure">Приключения</option>
+          </select>
+        </label>
+        <button class="btn primary" id="gen-plot">🎲 Сгенерировать</button>
+      </div>
+      <div class="output" id="plot-output">
+        <p class="placeholder">Нажми «Сгенерировать», чтобы получить идею…</p>
+      </div>
+      <button class="btn ghost" id="save-plot">💾 Сохранить</button>
+    </section>
+
+    <!-- ПЕРСОНАЖ -->
+    <section class="panel" id="character">
+      <h2>Генератор персонажа</h2>
+      <div class="controls">
+        <button class="btn primary" id="gen-char">🎲 Создать персонажа</button>
+      </div>
+      <div class="card" id="char-output">
+        <p class="placeholder">Здесь появится твой герой…</p>
+      </div>
+      <button class="btn ghost" id="save-char">💾 Сохранить</button>
+    </section>
+
+    <!-- МИР -->
+    <section class="panel" id="world">
+      <h2>Генератор мира</h2>
+      <div class="controls">
+        <button class="btn primary" id="gen-world">🎲 Построить мир</button>
+      </div>
+      <div class="output" id="world-output">
+        <p class="placeholder">Опиши свой мир или доверься генератору…</p>
+      </div>
+      <button class="btn ghost" id="save-world">💾 Сохранить</button>
+    </section>
+
+    <!-- ИМЕНА -->
+    <section class="panel" id="names">
+      <h2>Рандомайзер имён и фамилий</h2>
+      <div class="controls">
+        <label>Происхождение
+          <select id="name-origin">
+            <option value="ru">Русские</option>
+            <option value="en">Английские</option>
+            <option value="fantasy">Фэнтези</option>
+            <option value="japan">Японские</option>
+            <option value="scandi">Скандинавские</option>
+          </select>
+        </label>
+        <label>Пол
+          <select id="name-gender">
+            <option value="any">Любой</option>
+            <option value="m">Мужской</option>
+            <option value="f">Женский</option>
+          </select>
+        </label>
+        <button class="btn primary" id="gen-name">🎲 Имя</button>
+      </div>
+      <div class="names-output" id="names-output"></div>
+      <button class="btn ghost" id="save-name">💾 Сохранить последнее</button>
+    </section>
+
+    <!-- СОХРАНЁННЫЕ -->
+    <section class="panel" id="saved">
+      <h2>Сохранённые материалы</h2>
+      <div class="controls">
+        <button class="btn danger" id="clear-all">🗑 Очистить всё</button>
+        <button class="btn ghost" id="export-json">⬇ Экспорт JSON</button>
+      </div>
+      <div class="saved-list" id="saved-list">
+        <p class="placeholder">Здесь появятся твои сохранения…</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Создано с ❤️ для StoryTime · <a href="https://github.com/" target="_blank">GitHub</a></p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
