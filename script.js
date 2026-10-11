@@ -1064,8 +1064,100 @@ function renderProject() {
   }
 
   updateProjectProgress(p);
+  renderProjectLore(p);
   isRenderingProject = false;
 }
+
+// ============================================================
+// ЭНЦИКЛОПЕДИЯ ТЕКУЩЕГО ПРОЕКТА (не генератор)
+// ============================================================
+const PROJECT_ENTITY_TYPES = {
+  character: { label: 'Персонаж', icon: '👤' },
+  location: { label: 'Локация', icon: '🗺️' },
+  event: { label: 'Событие', icon: '📅' },
+  faction: { label: 'Организация / фракция', icon: '⚔️' },
+  item: { label: 'Предмет', icon: '🗝️' },
+  creature: { label: 'Существо / вид', icon: '🐉' }
+};
+function ensureProjectLore(p) {
+  if (!Array.isArray(p.entities)) p.entities = [];
+  if (!Array.isArray(p.relationships)) p.relationships = [];
+}
+function renderProjectLore(p) {
+  const list = $('project-entity-list');
+  const relList = $('project-relation-list');
+  if (!list || !p) return;
+  ensureProjectLore(p);
+  const filter = $('project-entity-filter')?.value || 'all';
+  const entities = p.entities.filter(e => filter === 'all' || e.type === filter);
+  list.innerHTML = entities.length ? entities.map(e => {
+    const type = PROJECT_ENTITY_TYPES[e.type] || PROJECT_ENTITY_TYPES.item;
+    const details = e.type === 'character'
+      ? [['Возраст',e.age],['Пол',e.gender],['Раса / вид',e.race],['Внешность',e.appearance],['Характер',e.personality],['Цель и мотивация',e.goals],['Биография',e.biography],['Друзья',e.friends],['Враги',e.enemies],['Родственники',e.family],['Прочее',e.notes]]
+      : [['Происхождение / дата',e.origin],['Описание',e.description],['Связанные события и примечания',e.notes]];
+    const text = details.filter(x => x[1]).map(x => `<p><strong>${esc(x[0])}:</strong> ${esc(x[1])}</p>`).join('');
+    return `<article class="project-entity-card"><div class="project-entity-title"><span>${type.icon} <strong>${esc(e.name)}</strong></span><span class="project-entity-actions"><button class="btn ghost small" data-project-entity-edit="${esc(e.id)}">Изменить</button><button class="btn danger small" data-project-entity-delete="${esc(e.id)}">Удалить</button></span></div><span class="muted-small">${esc(type.label)}</span><div class="project-entity-details">${text || '<p class="muted-small">Пока нет дополнительных сведений.</p>'}</div></article>`;
+  }).join('') : '<p class="placeholder">В этой категории пока нет элементов. Добавь их кнопкой выше — они сохранятся в текущем проекте.</p>';
+  if (relList) {
+    const chars = p.entities.filter(e => e.type === 'character');
+    relList.innerHTML = p.relationships.length ? p.relationships.map(r => {
+      const a = chars.find(e => e.id === r.from), b = chars.find(e => e.id === r.to);
+      return a && b ? `<div class="project-relation-row"><span>👤 <strong>${esc(a.name)}</strong> <span class="relation-kind">${esc(r.kind)}</span> 👤 <strong>${esc(b.name)}</strong></span><button class="btn danger small" data-project-relation-delete="${esc(r.id)}">Удалить</button>${r.notes ? `<p>${esc(r.notes)}</p>` : ''}</div>` : '';
+    }).join('') : '<p class="placeholder">Добавь минимум двух персонажей, затем нажми «Связать персонажей».</p>';
+  }
+  list.querySelectorAll('[data-project-entity-edit]').forEach(b => b.addEventListener('click', () => editProjectEntity(p, b.dataset.projectEntityEdit)));
+  list.querySelectorAll('[data-project-entity-delete]').forEach(b => b.addEventListener('click', async () => {
+    const e = p.entities.find(x => x.id === b.dataset.projectEntityDelete); if (!e) return;
+    const res = await promptModal('Удалить элемент сюжета?', [{id:'confirm',label:`Напиши «да», чтобы удалить «${e.name}»`,placeholder:'да'}]);
+    if (!res || res.confirm.trim().toLowerCase() !== 'да') return;
+    p.entities = p.entities.filter(x => x.id !== e.id);
+    p.relationships = p.relationships.filter(r => r.from !== e.id && r.to !== e.id);
+    saveProject(p); renderProjectLore(p); toast('Элемент удалён');
+  }));
+  relList?.querySelectorAll('[data-project-relation-delete]').forEach(b => b.addEventListener('click', () => {
+    p.relationships = p.relationships.filter(r => r.id !== b.dataset.projectRelationDelete); saveProject(p); renderProjectLore(p);
+  }));
+}
+async function editProjectEntity(p, id = null) {
+  ensureProjectLore(p);
+  const old = id ? p.entities.find(e => e.id === id) : null;
+  const typeOptions = Object.entries(PROJECT_ENTITY_TYPES).map(([v,t]) => ({v,l:`${t.icon} ${t.label}`}));
+  const base = [
+    {id:'type',label:'Тип элемента',type:'select',options:typeOptions,value:old?.type || 'character'},
+    {id:'name',label:'Имя / название',placeholder:'Название элемента',value:old?.name || ''}
+  ];
+  // Ask type first so the editor remains compact and tailored to the selected kind.
+  const first = await promptModal(old ? 'Изменить элемент сюжета' : 'Новый элемент собственного сюжета', base);
+  if (!first || !first.name.trim()) return;
+  const type = first.type || old?.type || 'character';
+  let fields;
+  if (type === 'character') fields = [
+    {id:'age',label:'Возраст',value:old?.age || ''},{id:'gender',label:'Пол / гендер',value:old?.gender || ''},{id:'race',label:'Раса / вид и происхождение',value:old?.race || ''},
+    {id:'appearance',label:'Внешность',type:'textarea',value:old?.appearance || ''},{id:'personality',label:'Характер',type:'textarea',value:old?.personality || ''},{id:'goals',label:'Цели, мотивация и внутренний конфликт',type:'textarea',value:old?.goals || ''},{id:'biography',label:'Биография и роль в сюжете',type:'textarea',value:old?.biography || ''},{id:'friends',label:'Друзья и союзники',type:'textarea',value:old?.friends || ''},{id:'enemies',label:'Враги и соперники',type:'textarea',value:old?.enemies || ''},{id:'family',label:'Родственники',type:'textarea',value:old?.family || ''},{id:'notes',label:'Остальная информация',type:'textarea',value:old?.notes || ''}
+  ]; else if (type === 'location') fields = [{id:'origin',label:'Расположение / эпоха',value:old?.origin || ''},{id:'description',label:'Описание, атмосфера и назначение',type:'textarea',value:old?.description || ''},{id:'notes',label:'История, жители, важные сцены и опасности',type:'textarea',value:old?.notes || ''}];
+  else if (type === 'event') fields = [{id:'origin',label:'Дата / период',value:old?.origin || ''},{id:'description',label:'Причина и участники',type:'textarea',value:old?.description || ''},{id:'notes',label:'Ход события, последствия и связь с сюжетом',type:'textarea',value:old?.notes || ''}];
+  else if (type === 'faction') fields = [{id:'origin',label:'Основание / эпоха',value:old?.origin || ''},{id:'description',label:'Цели, идеология, руководство',type:'textarea',value:old?.description || ''},{id:'notes',label:'Союзники, противники, история и структура',type:'textarea',value:old?.notes || ''}];
+  else if (type === 'creature') fields = [{id:'origin',label:'Среда обитания / происхождение',value:old?.origin || ''},{id:'description',label:'Внешность, поведение, способности',type:'textarea',value:old?.description || ''},{id:'notes',label:'Экология, ограничения и роль в истории',type:'textarea',value:old?.notes || ''}];
+  else fields = [{id:'origin',label:'Происхождение / владелец',value:old?.origin || ''},{id:'description',label:'Свойства и описание',type:'textarea',value:old?.description || ''},{id:'notes',label:'История и значение для повествования',type:'textarea',value:old?.notes || ''}];
+  const details = await promptModal(`Подробности: ${first.name.trim()}`, fields);
+  if (!details) return;
+  const entity = {...(old || {}), id:old?.id || uid(), type, name:first.name.trim(), ...details};
+  if (old) p.entities = p.entities.map(e => e.id === old.id ? entity : e); else p.entities.push(entity);
+  saveProject(p); renderProjectLore(p); toast(old ? 'Элемент обновлён' : 'Добавлено в собственный сюжет');
+}
+$('project-entity-add')?.addEventListener('click', () => {
+  const p = getProjects().find(x => x.id === activeProjectId); if (!p) return toast('Сначала открой свой проект'); editProjectEntity(p);
+});
+$('project-entity-filter')?.addEventListener('change', () => { const p=getProjects().find(x=>x.id===activeProjectId); if(p) renderProjectLore(p); });
+$('project-relation-add')?.addEventListener('click', async () => {
+  const p = getProjects().find(x => x.id === activeProjectId); if (!p) return toast('Сначала открой свой проект'); ensureProjectLore(p);
+  const chars = p.entities.filter(e => e.type === 'character'); if (chars.length < 2) return toast('Сначала добавь минимум двух персонажей в свой сюжет');
+  const opts = chars.map(c => ({v:c.id,l:c.name}));
+  const kinds = ['Друзья','Враги','Родственники','Коллеги','Любовный интерес','Союзники','Соперники','Предательство','Наставник и ученик','Знакомые','Другое'].map(x=>({v:x,l:x}));
+  const r = await promptModal('Связь между персонажами этого сюжета', [{id:'from',label:'Первый персонаж',type:'select',options:opts},{id:'kind',label:'Тип отношений',type:'select',options:kinds},{id:'to',label:'Второй персонаж',type:'select',options:opts},{id:'notes',label:'История / примечание',type:'textarea',placeholder:'Почему они связаны? Что между ними произошло?'}]);
+  if (!r || r.from === r.to) return r ? toast('Выбери двух разных персонажей') : null;
+  p.relationships.push({id:uid(),from:r.from,to:r.to,kind:r.kind,notes:r.notes || ''}); saveProject(p); renderProjectLore(p); toast('Связь добавлена в проект');
+});
 
 // ============================================================
 // СЧЁТЧИКИ И СТАТУС СОХРАНЕНИЯ

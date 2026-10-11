@@ -1053,3 +1053,24 @@ body { font-size: calc(1rem * var(--user-font-scale, 1)); line-height: var(--use
   .relation-person-row, .relation-link-row { padding: 8px; }
   .form-grid input, .form-grid textarea { font-size: 16px; }
 }
+
+
+/* StoryTime 1.4 — элементы собственного проекта */
+.project-lore { margin-top: 22px; padding: 18px; }
+.project-lore-head, .project-lore-toolbar, .project-entity-title, .project-entity-actions, .project-relation-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.project-lore-head { margin-bottom:14px; }
+.project-lore-head h3, .project-relations h4 { margin:0 0 5px; }
+.project-lore-toolbar { justify-content:flex-start; flex-wrap:wrap; margin:12px 0 16px; }
+.project-lore-toolbar label { display:flex; align-items:center; gap:8px; color:var(--muted); }
+.project-entity-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:12px; }
+.project-entity-card { min-width:0; padding:14px; border:1px solid var(--border); border-radius:14px; background:var(--surface,rgba(255,255,255,.025)); }
+.project-entity-title { align-items:flex-start; flex-wrap:wrap; }
+.project-entity-title > span:first-child { overflow-wrap:anywhere; }
+.project-entity-actions { flex-wrap:wrap; }
+.project-entity-details { margin-top:10px; overflow-wrap:anywhere; }
+.project-entity-details p { margin:7px 0; line-height:1.55; }
+.project-relations { margin-top:20px; }
+.project-relation-row { flex-wrap:wrap; padding:10px 0; border-bottom:1px solid var(--border); }
+.project-relation-row p { width:100%; margin:0; color:var(--muted); }
+.relation-kind { display:inline-block; margin:0 5px; padding:3px 7px; border-radius:8px; background:var(--border); font-size:.85em; }
+@media(max-width:700px) { .project-lore-head { align-items:flex-start; flex-direction:column; } .project-lore-head .btn { width:100%; } .project-entity-title { flex-direction:column; align-items:stretch; } .project-entity-actions .btn { flex:1; } .project-lore { padding:12px; } }
