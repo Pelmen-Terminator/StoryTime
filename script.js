@@ -1,5 +1,5 @@
 // ============================================================
-// StoryTime v1.3 — полная логика приложения
+// StoryTime v1.4 — редакторы, схема отношений и настройки
 // ============================================================
 'use strict';
 
@@ -419,6 +419,7 @@ function genChar() {
 Привычка: ${char.quirk}.
 Тайна: ${char.secret}.
 Цель: ${char.goal}.`;
+  populateDetailedCharacter({ name: char.name, age: char.age, gender: char.gender, race: '', origin: char.origin, role: char.archetype, appearance: char.appearance, personality: `${char.trait}; слабости: ${char.flaw}; цель: ${char.goal}`, notes: `Тайна: ${char.secret}. Привычка: ${char.quirk}.` });
 }
 $('gen-char')?.addEventListener('click', genChar);
 $('save-char')?.addEventListener('click', () => {
@@ -460,12 +461,12 @@ function genWorld() {
 $('gen-world')?.addEventListener('click', genWorld);
 $('save-world')?.addEventListener('click', () => {
   if (!lastWorld) return toast('Сначала сгенерируй мир');
-  saveItem('Мир', lastWorld);
+  saveItem('Мир', withExtraNotes(lastWorld, 'Дополнительные сведения', [['world-detail-era','Эпоха и технологии'],['world-detail-geography','География и климат'],['world-detail-society','Общество и культура'],['world-detail-history','История и дополнительные конфликты']]));
   toast('Сохранено ✓');
 });
 $('send-world-to-project')?.addEventListener('click', () => {
   if (!lastWorld) return toast('Сначала сгенерируй мир');
-  addNodeToActiveProject('Мир', lastWorld, 'note');
+  addNodeToActiveProject('Мир', withExtraNotes(lastWorld, 'Дополнительные сведения', [['world-detail-era','Эпоха и технологии'],['world-detail-geography','География и климат'],['world-detail-society','Общество и культура'],['world-detail-history','История и дополнительные конфликты']]), 'note');
   toast('Отправлено в проект ✓');
 });
 
@@ -507,12 +508,12 @@ function genCreature() {
 $('gen-creature')?.addEventListener('click', genCreature);
 $('save-creature')?.addEventListener('click', () => {
   if (!lastCreature) return toast('Сначала создай существо');
-  saveItem('Существо', lastCreature);
+  saveItem('Существо', withExtraNotes(lastCreature, 'Дополнительные сведения', [['creature-detail-habitat','Среда обитания'],['creature-detail-behavior','Поведение и интеллект'],['creature-detail-abilities','Способности и ограничения'],['creature-detail-ecology','Роль в экосистеме']]));
   toast('Сохранено ✓');
 });
 $('send-creature-to-project')?.addEventListener('click', () => {
   if (!lastCreature) return toast('Сначала создай существо');
-  addNodeToActiveProject('Существо', lastCreature, 'creature');
+  addNodeToActiveProject('Существо', withExtraNotes(lastCreature, 'Дополнительные сведения', [['creature-detail-habitat','Среда обитания'],['creature-detail-behavior','Поведение и интеллект'],['creature-detail-abilities','Способности и ограничения'],['creature-detail-ecology','Роль в экосистеме']]), 'creature');
   toast('Отправлено в проект ✓');
 });
 
@@ -551,12 +552,12 @@ function genLocation() {
 $('gen-location')?.addEventListener('click', genLocation);
 $('save-location')?.addEventListener('click', () => {
   if (!lastLocation) return toast('Сначала создай локацию');
-  saveItem('Локация', lastLocation);
+  saveItem('Локация', withExtraNotes(lastLocation, 'Дополнительные сведения', [['location-detail-population','Население и устройство'],['location-detail-landmarks','Важные места'],['location-detail-atmosphere','Атмосфера и история'],['location-detail-dangers','Опасности и возможности']]));
   toast('Сохранено ✓');
 });
 $('send-location-to-project')?.addEventListener('click', () => {
   if (!lastLocation) return toast('Сначала создай локацию');
-  addNodeToActiveProject('Локация', lastLocation, 'location');
+  addNodeToActiveProject('Локация', withExtraNotes(lastLocation, 'Дополнительные сведения', [['location-detail-population','Население и устройство'],['location-detail-landmarks','Важные места'],['location-detail-atmosphere','Атмосфера и история'],['location-detail-dangers','Опасности и возможности']]), 'location');
   toast('Отправлено в проект ✓');
 });
 
@@ -803,7 +804,9 @@ function createBackup(label = 'auto') {
       label,
       projects: getProjects(),
       saved: getSaved(),
-      plotbuilder: JSON.parse(localStorage.getItem(PB_KEY) || 'null')
+      plotbuilder: JSON.parse(localStorage.getItem(PB_KEY) || 'null'),
+      relationships: JSON.parse(localStorage.getItem('storytime-relationships-v1') || '{"people":[],"links":[]}'),
+      displaySettings: JSON.parse(localStorage.getItem('storytime-display-settings') || 'null')
     };
     const backups = JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]');
     backups.unshift(snapshot);
@@ -1458,6 +1461,10 @@ $('backup-btn')?.addEventListener('click', async () => {
     setProjects(b.projects || []);
     setSaved(b.saved || []);
     if (b.plotbuilder) localStorage.setItem(PB_KEY, JSON.stringify(b.plotbuilder));
+    if (b.relationships) localStorage.setItem('storytime-relationships-v1', JSON.stringify(b.relationships));
+    if (b.displaySettings) localStorage.setItem('storytime-display-settings', JSON.stringify(b.displaySettings));
+    window.dispatchEvent(new Event('storytime-relationships-restored'));
+    window.dispatchEvent(new Event('storytime-settings-restored'));
     renderProjects();
     renderSaved();
     activeProjectId = null;
@@ -1469,7 +1476,9 @@ $('backup-btn')?.addEventListener('click', async () => {
       date: new Date().toISOString(),
       projects: getProjects(),
       saved: getSaved(),
-      plotbuilder: JSON.parse(localStorage.getItem(PB_KEY) || 'null')
+      plotbuilder: JSON.parse(localStorage.getItem(PB_KEY) || 'null'),
+      relationships: JSON.parse(localStorage.getItem('storytime-relationships-v1') || '{"people":[],"links":[]}'),
+      displaySettings: JSON.parse(localStorage.getItem('storytime-display-settings') || 'null')
     };
     const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -1548,3 +1557,182 @@ window.addEventListener('beforeunload', () => {
 renderSaved();
 renderProjects();
 showEditorEmpty();
+// ============================================================
+// StoryTime v1.4 — настройки отображения
+// ============================================================
+(function initDisplaySettings() {
+  const defaults = { fontSize: 100, textWidth: 1200, lineHeight: 16, density: 'comfortable' };
+  let settings = { ...defaults };
+  try {
+    const saved = JSON.parse(localStorage.getItem('storytime-display-settings') || 'null');
+    if (saved && typeof saved === 'object') settings = { ...defaults, ...saved };
+  } catch (_) {}
+
+  const clamp = (v, min, max, fallback) => Number.isFinite(Number(v)) ? Math.min(max, Math.max(min, Number(v))) : fallback;
+  function apply() {
+    settings.fontSize = clamp(settings.fontSize, 85, 125, defaults.fontSize);
+    settings.textWidth = clamp(settings.textWidth, 800, 1600, defaults.textWidth);
+    settings.lineHeight = clamp(settings.lineHeight, 12, 22, defaults.lineHeight);
+    if (!['comfortable', 'normal', 'compact'].includes(settings.density)) settings.density = defaults.density;
+    document.documentElement.style.setProperty('--user-font-scale', String(settings.fontSize / 100));
+    document.documentElement.style.setProperty('--user-text-width', `${settings.textWidth}px`);
+    document.documentElement.style.setProperty('--user-line-height', String(settings.lineHeight / 10));
+    document.documentElement.dataset.density = settings.density;
+    const font = $('setting-font-size'), width = $('setting-text-width'), line = $('setting-line-height'), density = $('setting-density');
+    if (font) font.value = String(settings.fontSize);
+    if (width) width.value = String(settings.textWidth);
+    if (line) line.value = String(settings.lineHeight);
+    if (density) density.value = settings.density;
+    if ($('setting-font-size-value')) $('setting-font-size-value').textContent = `${settings.fontSize}%`;
+    if ($('setting-text-width-value')) $('setting-text-width-value').textContent = `${settings.textWidth} px`;
+    if ($('setting-line-height-value')) $('setting-line-height-value').textContent = (settings.lineHeight / 10).toFixed(1);
+    try { localStorage.setItem('storytime-display-settings', JSON.stringify(settings)); } catch (_) {}
+  }
+  $('setting-font-size')?.addEventListener('input', e => { settings.fontSize = +e.target.value; apply(); });
+  $('setting-text-width')?.addEventListener('input', e => { settings.textWidth = +e.target.value; apply(); });
+  $('setting-line-height')?.addEventListener('input', e => { settings.lineHeight = +e.target.value; apply(); });
+  $('setting-density')?.addEventListener('change', e => { settings.density = e.target.value; apply(); });
+  $('settings-reset')?.addEventListener('click', () => { settings = { ...defaults }; apply(); toast('Настройки сброшены'); });
+  window.addEventListener('storytime-settings-restored', () => { try { const restored = JSON.parse(localStorage.getItem('storytime-display-settings') || 'null'); settings = { ...defaults, ...(restored || {}) }; } catch (_) { settings = { ...defaults }; } apply(); });
+  apply();
+})();
+
+// ============================================================
+// StoryTime v1.4 — расширенная карточка персонажа
+// ============================================================
+function getDetailedCharacter() {
+  const get = id => ($(id)?.value || '').trim();
+  return {
+    name: get('detail-char-name'), age: get('detail-char-age'), gender: get('detail-char-gender'),
+    race: get('detail-char-race'), origin: get('detail-char-origin'), role: get('detail-char-role'),
+    friends: get('detail-char-friends'), enemies: get('detail-char-enemies'), relatives: get('detail-char-relatives'),
+    allies: get('detail-char-allies'), appearance: get('detail-char-appearance'), personality: get('detail-char-personality'), notes: get('detail-char-notes')
+  };
+}
+function populateDetailedCharacter(c = {}) {
+  const map = {
+    'detail-char-name': c.name, 'detail-char-age': c.age, 'detail-char-gender': c.gender,
+    'detail-char-race': c.race, 'detail-char-origin': c.origin, 'detail-char-role': c.role,
+    'detail-char-friends': c.friends, 'detail-char-enemies': c.enemies, 'detail-char-relatives': c.relatives,
+    'detail-char-allies': c.allies, 'detail-char-appearance': c.appearance, 'detail-char-personality': c.personality, 'detail-char-notes': c.notes
+  };
+  Object.entries(map).forEach(([id, value]) => { const el = $(id); if (el && value != null) el.value = String(value); });
+}
+function detailedCharacterText(c = getDetailedCharacter()) {
+  const labels = { name: 'Имя', age: 'Возраст', gender: 'Пол / гендер', race: 'Раса / вид', origin: 'Происхождение', role: 'Роль в истории', friends: 'Друзья', enemies: 'Враги', relatives: 'Родственники', allies: 'Союзники и коллеги', appearance: 'Внешность', personality: 'Характер и мотивация', notes: 'Биография и прочая информация' };
+  return Object.entries(labels).filter(([key]) => c[key] !== '' && c[key] != null).map(([key, label]) => `${label}: ${c[key]}`).join('\n');
+}
+$('save-detailed-char')?.addEventListener('click', () => {
+  const c = getDetailedCharacter();
+  if (!c.name) return toast('Укажи имя персонажа');
+  saveItem('Персонаж', detailedCharacterText(c));
+  toast('Карточка персонажа сохранена');
+});
+$('send-detailed-char-project')?.addEventListener('click', () => {
+  const c = getDetailedCharacter();
+  if (!c.name) return toast('Укажи имя персонажа');
+  addNodeToActiveProject('Персонаж: ' + c.name, detailedCharacterText(c), 'character');
+  toast('Карточка добавлена в проект');
+});
+
+// ============================================================
+// StoryTime v1.4 — интерактивная схема отношений
+// ============================================================
+(function initRelationshipMap() {
+  const KEY = 'storytime-relationships-v1';
+  const types = ['Друзья', 'Враги', 'Родственники', 'Коллеги', 'Предательство', 'Любовный интерес', 'Наставник и ученик', 'Союзники', 'Соперники', 'Долг / обязательство', 'Другое'];
+  let graph = { people: [], links: [] };
+  let selectedId = null;
+  try {
+    const parsed = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (parsed && Array.isArray(parsed.people) && Array.isArray(parsed.links)) graph = parsed;
+  } catch (_) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(graph)); } catch (_) { toast('Не удалось сохранить схему: память браузера недоступна'); } };
+  const personById = id => graph.people.find(p => p.id === id);
+  function fillPeopleSelects() {
+    ['relation-from', 'relation-to'].forEach(id => {
+      const el = $(id); if (!el) return;
+      const old = el.value;
+      el.innerHTML = '<option value="">— Выбери персонажа —</option>' + graph.people.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+      if (graph.people.some(p => p.id === old)) el.value = old;
+    });
+  }
+  function render() {
+    fillPeopleSelects();
+    const peopleList = $('relation-person-list');
+    if (peopleList) peopleList.innerHTML = graph.people.length ? graph.people.map(p => `<div class="relation-person-row"><button class="text-link" data-select-person="${esc(p.id)}">${esc(p.name)}</button><button class="mini-delete" data-delete-person="${esc(p.id)}" aria-label="Удалить ${esc(p.name)}">×</button></div>`).join('') : '<p class="placeholder">Пока нет персонажей.</p>';
+    const linksList = $('relation-links-list');
+    if (linksList) linksList.innerHTML = graph.links.length ? graph.links.map(l => {
+      const a = personById(l.from), b = personById(l.to);
+      return `<div class="relation-link-row"><div><strong>${esc(a?.name || 'Удалён')}</strong> <span class="muted-small">— ${esc(l.type)} →</span> <strong>${esc(b?.name || 'Удалён')}</strong>${l.note ? `<p>${esc(l.note)}</p>` : ''}</div><button class="mini-delete" data-delete-link="${esc(l.id)}" aria-label="Удалить связь">×</button></div>`;
+    }).join('') : '<p class="placeholder">Связей пока нет.</p>';
+    renderMap();
+  }
+  function renderMap() {
+    const holder = $('relationship-map'); if (!holder) return;
+    if (!graph.people.length) { holder.innerHTML = '<p class="placeholder">Добавь персонажей, чтобы построить схему.</p>'; return; }
+    const w = 720, h = Math.max(320, Math.ceil(graph.people.length / 4) * 145 + 80);
+    const positions = new Map();
+    graph.people.forEach((p, i) => {
+      const cols = Math.min(4, Math.max(1, graph.people.length));
+      const row = Math.floor(i / cols), col = i % cols;
+      const rowCount = Math.min(cols, graph.people.length - row * cols);
+      positions.set(p.id, { x: (w / (rowCount + 1)) * (col + 1), y: 58 + row * 145 });
+    });
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Схема отношений персонажей');
+    graph.links.forEach(l => {
+      const a = positions.get(l.from), b = positions.get(l.to); if (!a || !b) return;
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', a.x); line.setAttribute('y1', a.y + 22); line.setAttribute('x2', b.x); line.setAttribute('y2', b.y - 22); line.setAttribute('class', 'relation-edge ' + relationClass(l.type)); svg.appendChild(line);
+      const tx = document.createElementNS(svgNS, 'text'); tx.setAttribute('x', (a.x + b.x) / 2); tx.setAttribute('y', (a.y + b.y) / 2); tx.setAttribute('class', 'relation-edge-label'); tx.textContent = l.type; svg.appendChild(tx);
+    });
+    graph.people.forEach(p => {
+      const pos = positions.get(p.id), g = document.createElementNS(svgNS, 'g'); g.setAttribute('class', 'relation-node' + (selectedId === p.id ? ' selected' : '')); g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button'); g.setAttribute('aria-label', `Выбрать ${p.name}`); g.dataset.personId = p.id;
+      const rect = document.createElementNS(svgNS, 'rect'); rect.setAttribute('x', pos.x - 72); rect.setAttribute('y', pos.y - 23); rect.setAttribute('width', 144); rect.setAttribute('height', 46); rect.setAttribute('rx', 13); g.appendChild(rect);
+      const text = document.createElementNS(svgNS, 'text'); text.setAttribute('x', pos.x); text.setAttribute('y', pos.y + 5); text.textContent = p.name.length > 20 ? p.name.slice(0, 18) + '…' : p.name; g.appendChild(text);
+      const choose = () => { selectedId = p.id; const info = $('relation-selected-info'); if (info) info.textContent = `${p.name}: ${graph.links.filter(l => l.from === p.id || l.to === p.id).length} связей`; renderMap(); };
+      g.addEventListener('click', choose); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(); } }); svg.appendChild(g);
+    });
+    holder.replaceChildren(svg);
+    const info = $('relation-selected-info'); if (info && selectedId) { const p = personById(selectedId); info.textContent = p ? `${p.name}: ${graph.links.filter(l => l.from === p.id || l.to === p.id).length} связей` : ''; }
+  }
+  function relationClass(type) {
+    if (type === 'Друзья' || type === 'Союзники') return 'positive';
+    if (type === 'Враги' || type === 'Предательство' || type === 'Соперники') return 'negative';
+    if (type === 'Любовный интерес') return 'romantic';
+    return 'neutral';
+  }
+  function addPerson(name) {
+    const clean = String(name || '').trim(); if (!clean) return toast('Введи имя персонажа');
+    if (graph.people.some(p => p.name.toLowerCase() === clean.toLowerCase())) return toast('Такой персонаж уже есть в схеме');
+    const p = { id: uid(), name: clean }; graph.people.push(p); selectedId = p.id; save(); render(); toast('Персонаж добавлен в схему');
+  }
+  $('relation-add-person')?.addEventListener('click', () => { addPerson($('relation-person-name')?.value); if ($('relation-person-name')) $('relation-person-name').value = ''; });
+  $('relation-person-name')?.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('relation-add-person')?.click(); } });
+  $('add-detailed-char-relation')?.addEventListener('click', () => { const c = getDetailedCharacter(); if (!c.name) return toast('Сначала укажи имя персонажа'); addPerson(c.name); });
+  $('relation-add-link')?.addEventListener('click', () => {
+    const from = $('relation-from')?.value, to = $('relation-to')?.value, type = $('relation-type')?.value || types[0], note = ($('relation-note')?.value || '').trim();
+    if (!from || !to) return toast('Выбери обоих персонажей');
+    if (from === to) return toast('Нельзя связать персонажа с самим собой');
+    if (graph.links.some(l => l.from === from && l.to === to && l.type === type)) return toast('Такая связь уже существует');
+    graph.links.push({ id: uid(), from, to, type, note }); save(); render(); if ($('relation-note')) $('relation-note').value = ''; toast('Связь добавлена');
+  });
+  document.addEventListener('click', e => {
+    const delPerson = e.target.closest('[data-delete-person]');
+    const delLink = e.target.closest('[data-delete-link]');
+    const selectPerson = e.target.closest('[data-select-person]');
+    if (delPerson) {
+      const id = delPerson.dataset.deletePerson; graph.people = graph.people.filter(p => p.id !== id); graph.links = graph.links.filter(l => l.from !== id && l.to !== id); if (selectedId === id) selectedId = null; save(); render();
+    } else if (delLink) { graph.links = graph.links.filter(l => l.id !== delLink.dataset.deleteLink); save(); render(); }
+    else if (selectPerson) { selectedId = selectPerson.dataset.selectPerson; renderMap(); }
+  });
+  window.addEventListener('storytime-relationships-restored', () => { try { const restored = JSON.parse(localStorage.getItem(KEY) || 'null'); if (restored && Array.isArray(restored.people) && Array.isArray(restored.links)) graph = restored; else graph = { people: [], links: [] }; } catch (_) { graph = { people: [], links: [] }; } selectedId = null; render(); });
+  render();
+})();
+
+// Дополнительные заметки для расширенных редакторов мира, существ и локаций.
+function withExtraNotes(base, prefix, fields) {
+  const rows = fields.map(([id, label]) => ({ label, value: ($(id)?.value || '').trim() })).filter(x => x.value);
+  return base + (rows.length ? `\n\n${prefix}\n` + rows.map(x => `${x.label}: ${x.value}`).join('\n') : '');
+}

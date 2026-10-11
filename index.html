@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="StoryTime — студия историй: генераторы и редактор проектов с иерархией.">
-  <title>StoryTime — студия историй v1.3</title>
+  <title>StoryTime — студия историй v1.4</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -15,7 +15,7 @@
     <div class="logo">
       <span class="logo-icon">📖</span>
       <h1>Story<span>Time</span></h1>
-      <span class="version">v1.3</span>
+      <span class="version">v1.4</span>
     </div>
 
     <div class="header-right">
@@ -38,11 +38,13 @@
     <button class="tab" data-tab="plotbuilder" role="tab">🎯 Конструктор</button>
     <button class="tab" data-tab="plot" role="tab">🎬 Сюжет</button>
     <button class="tab" data-tab="character" role="tab">👤 Персонаж</button>
+    <button class="tab" data-tab="relationships" role="tab">🔗 Связи</button>
     <button class="tab" data-tab="world" role="tab">🌍 Мир</button>
     <button class="tab" data-tab="creature" role="tab">🐉 Существо</button>
     <button class="tab" data-tab="location" role="tab">🗺 Локация</button>
     <button class="tab" data-tab="names" role="tab">✨ Имена</button>
     <button class="tab" data-tab="saved" role="tab">💾 Библиотека</button>
+    <button class="tab" data-tab="settings" role="tab">⚙️ Настройки</button>
     <button class="tab" id="updates-tab" data-tab="updates" role="tab" aria-controls="updates">🕘 Обновления</button>
   </nav>
 
@@ -148,17 +150,40 @@
     <section class="panel" id="character" role="tabpanel">
       <div class="panel-head"><div><h2>Генератор персонажа</h2><p class="subtitle">Имя, архетип, характер, достоинства и слабости.</p></div><button class="btn ghost small" data-help="character">❓ Помощь</button></div>
       <div class="controls"><label>Культура/имена<select id="char-origin"></select></label><label>Пол<select id="char-gender"><option value="any">Любой</option><option value="m">Мужской</option><option value="f">Женский</option></select></label><label>Архетип<select id="char-archetype"></select></label><button class="btn primary" id="gen-char">🎲 Создать персонажа</button></div>
-      <div class="output" id="char-output">Здесь появится персонаж…</div><div class="row-actions"><button class="btn primary" id="save-char">💾 Сохранить</button><button class="btn ghost" id="send-char-to-project">📥 В проект</button></div>
+      <div class="output" id="char-output">Здесь появится персонаж…</div>
+      <div class="card character-editor-card">
+        <h3>Подробный редактор персонажа</h3>
+        <p class="subtitle">Заполни поля вручную или создай основу генератором выше. Эти данные можно сохранить в библиотеку и добавить на схему отношений.</p>
+        <div class="form-grid">
+          <label>Имя персонажа<input id="detail-char-name" placeholder="Имя и фамилия"></label>
+          <label>Возраст<input id="detail-char-age" type="number" min="0" max="999" placeholder="Например, 28"></label>
+          <label>Пол / гендер<input id="detail-char-gender" placeholder="Например, мужчина, женщина, небинарный"></label>
+          <label>Раса / вид<input id="detail-char-race" placeholder="Человек, эльф, киборг…"></label>
+          <label>Происхождение<input id="detail-char-origin" placeholder="Страна, народ, культура"></label>
+          <label>Роль в истории<input id="detail-char-role" placeholder="Главный герой, антагонист…"></label>
+          <label>Друзья<textarea id="detail-char-friends" rows="2" placeholder="Имена и характер отношений"></textarea></label>
+          <label>Враги<textarea id="detail-char-enemies" rows="2" placeholder="Имена, причины конфликта"></textarea></label>
+          <label>Родственники<textarea id="detail-char-relatives" rows="2" placeholder="Семья, родственные связи"></textarea></label>
+          <label>Союзники и коллеги<textarea id="detail-char-allies" rows="2" placeholder="Команда, организация, коллеги"></textarea></label>
+          <label>Внешность<textarea id="detail-char-appearance" rows="2" placeholder="Рост, одежда, отличительные черты"></textarea></label>
+          <label>Характер и мотивация<textarea id="detail-char-personality" rows="2" placeholder="Черты характера, цели, страхи"></textarea></label>
+          <label class="wide-field">Биография и прочая информация<textarea id="detail-char-notes" rows="4" placeholder="Прошлое, навыки, убеждения, секреты, развитие персонажа…"></textarea></label>
+        </div>
+        <div class="row-actions"><button class="btn primary" id="save-detailed-char">💾 Сохранить карточку</button><button class="btn ghost" id="add-detailed-char-relation">🔗 Добавить в схему связей</button><button class="btn ghost" id="send-detailed-char-project">📥 В проект</button></div>
+      </div>
+      <div class="row-actions"><button class="btn primary" id="save-char">💾 Сохранить генерацию</button><button class="btn ghost" id="send-char-to-project">📥 Генерацию в проект</button></div>
     </section>
 
     <section class="panel" id="world" role="tabpanel">
       <div class="panel-head"><div><h2>Генератор мира</h2><p class="subtitle">Общество, политика, магия, экономика и конфликт.</p></div><button class="btn ghost small" data-help="world">❓ Помощь</button></div>
-      <div class="controls"><button class="btn primary" id="gen-world">🌍 Создать мир</button></div><div class="output" id="world-output">Здесь появится описание мира…</div><div class="row-actions"><button class="btn primary" id="save-world">💾 Сохранить</button><button class="btn ghost" id="send-world-to-project">📥 В проект</button></div>
+      <div class="controls"><button class="btn primary" id="gen-world">🌍 Создать мир</button></div><div class="output" id="world-output">Здесь появится описание мира…</div>
+      <div class="card detail-notes-card"><h3>Дополнить описание мира</h3><div class="form-grid"><label>Эпоха и технологии<textarea id="world-detail-era" rows="2" placeholder="Уровень технологий, исторический период"></textarea></label><label>География и климат<textarea id="world-detail-geography" rows="2" placeholder="Континенты, климат, ресурсы"></textarea></label><label>Общество и культура<textarea id="world-detail-society" rows="2" placeholder="Классы, обычаи, образование"></textarea></label><label>История и дополнительные конфликты<textarea id="world-detail-history" rows="2" placeholder="Войны, реформы, кризисы"></textarea></label></div></div><div class="row-actions"><button class="btn primary" id="save-world">💾 Сохранить</button><button class="btn ghost" id="send-world-to-project">📥 В проект</button></div>
     </section>
 
     <section class="panel" id="creature" role="tabpanel">
       <div class="panel-head"><div><h2>Генератор существ</h2><p class="subtitle">Создавай обитателей своих миров.</p></div><button class="btn ghost small" data-help="creature">❓ Помощь</button></div>
-      <div class="controls"><label>Тип существа<select id="creature-type"></select></label><button class="btn primary" id="gen-creature">🐉 Создать существо</button></div><div class="output" id="creature-output">Здесь появится существо…</div><div class="row-actions"><button class="btn primary" id="save-creature">💾 Сохранить</button><button class="btn ghost" id="send-creature-to-project">📥 В проект</button></div>
+      <div class="controls"><label>Тип существа<select id="creature-type"></select></label><button class="btn primary" id="gen-creature">🐉 Создать существо</button></div><div class="output" id="creature-output">Здесь появится существо…</div>
+      <div class="card detail-notes-card"><h3>Дополнить описание существа</h3><div class="form-grid"><label>Среда обитания<textarea id="creature-detail-habitat" rows="2" placeholder="Биом, ареал, убежище"></textarea></label><label>Поведение и интеллект<textarea id="creature-detail-behavior" rows="2" placeholder="Социальность, привычки, разум"></textarea></label><label>Способности и ограничения<textarea id="creature-detail-abilities" rows="2" placeholder="Навыки, магия, слабые места"></textarea></label><label>Роль в экосистеме<textarea id="creature-detail-ecology" rows="2" placeholder="Хищник, опылитель, паразит…"></textarea></label></div></div><div class="row-actions"><button class="btn primary" id="save-creature">💾 Сохранить</button><button class="btn ghost" id="send-creature-to-project">📥 В проект</button></div>
     </section>
 
     <section class="panel" id="location" role="tabpanel">
@@ -176,10 +201,51 @@
       <div class="controls"><label>Поиск<input id="search-saved" class="search-input" type="text" placeholder="Найти в библиотеке…"></label><label>Тип<select id="filter-saved"><option value="all">Все материалы</option><option value="Сюжет">Сюжеты</option><option value="Персонаж">Персонажи</option><option value="Мир">Миры</option><option value="Существо">Существа</option><option value="Локация">Локации</option><option value="Имена">Имена</option><option value="Конструктор">Конструктор</option></select></label><button class="btn ghost" id="export-json">⬇ Экспорт JSON</button><button class="btn ghost" id="import-json">⬆ Импорт JSON</button><input type="file" id="import-file" accept=".json,application/json" hidden><button class="btn danger" id="clear-all">Очистить библиотеку</button></div><div id="saved-list"></div>
     </section>
 
+    <section class="panel" id="relationships" role="tabpanel">
+      <div class="panel-head"><div><h2>Схема отношений персонажей</h2><p class="subtitle">Добавляй персонажей и связывай их. Схема сохраняется в этом браузере.</p></div></div>
+      <div class="relation-layout">
+        <div class="card relation-controls">
+          <h3>Персонажи</h3>
+          <div class="controls stacked-controls"><label>Имя нового персонажа<input id="relation-person-name" placeholder="Например, Анна Волкова"></label><button class="btn primary" id="relation-add-person">＋ Добавить персонажа</button></div>
+          <div id="relation-person-list" class="relation-person-list"></div>
+          <hr class="soft-rule">
+          <h3>Создать связь</h3>
+          <label>Первый персонаж<select id="relation-from"></select></label>
+          <label>Тип отношений<select id="relation-type"><option value="Друзья">Друзья</option><option value="Враги">Враги</option><option value="Родственники">Родственники</option><option value="Коллеги">Коллеги</option><option value="Предательство">Предательство</option><option value="Любовный интерес">Любовный интерес</option><option value="Наставник и ученик">Наставник и ученик</option><option value="Союзники">Союзники</option><option value="Соперники">Соперники</option><option value="Долг / обязательство">Долг / обязательство</option><option value="Другое">Другое</option></select></label>
+          <label>Второй персонаж<select id="relation-to"></select></label>
+          <label>Примечание<input id="relation-note" placeholder="Причина, тайна, контекст (необязательно)"></label>
+          <button class="btn primary" id="relation-add-link">＋ Создать связь</button>
+          <div id="relation-links-list" class="relation-links-list"></div>
+        </div>
+        <div class="card relation-visual-card"><div class="relation-visual-head"><h3>Карта отношений</h3><span class="muted-small">Нажми на узел, чтобы выбрать персонажа</span></div><div id="relationship-map" class="relationship-map"><p class="placeholder">Добавь минимум двух персонажей, чтобы построить схему.</p></div><div id="relation-selected-info" class="relation-selected-info"></div></div>
+      </div>
+    </section>
+
+    <section class="panel" id="settings" role="tabpanel">
+      <div class="panel-head"><div><h2>Настройки интерфейса</h2><p class="subtitle">Настрой отображение под себя. Параметры сохраняются в браузере.</p></div></div>
+      <div class="settings-grid">
+        <div class="card setting-card"><label for="setting-font-size">Размер шрифта <strong id="setting-font-size-value">100%</strong></label><input id="setting-font-size" type="range" min="85" max="125" step="5" value="100"><div class="setting-hints"><span>Компактнее</span><span>Крупнее</span></div></div>
+        <div class="card setting-card"><label for="setting-text-width">Ширина текста <strong id="setting-text-width-value">1200 px</strong></label><input id="setting-text-width" type="range" min="800" max="1600" step="50" value="1200"><div class="setting-hints"><span>Уже</span><span>Шире</span></div></div>
+        <div class="card setting-card"><label for="setting-line-height">Межстрочный интервал <strong id="setting-line-height-value">1.6</strong></label><input id="setting-line-height" type="range" min="12" max="22" step="1" value="16"><div class="setting-hints"><span>Плотнее</span><span>Свободнее</span></div></div>
+        <div class="card setting-card"><label for="setting-density">Плотность интерфейса</label><select id="setting-density"><option value="comfortable">Комфортная</option><option value="normal">Обычная</option><option value="compact">Компактная</option></select><p class="setting-description">Меняет отступы карточек, панелей и элементов управления.</p></div>
+      </div>
+      <div class="settings-preview card"><h3>Предпросмотр</h3><p>Так будет выглядеть текст в редакторе. Настройки помогают подобрать удобный размер и расстояние между строками для длительной работы над историей.</p><button class="btn ghost" id="settings-reset">Сбросить настройки</button></div>
+    </section>
+
     <section class="panel" id="updates" role="tabpanel" aria-labelledby="updates-tab">
       <div class="panel-head"><div><h2>История обновлений</h2><p class="subtitle">Основные изменения StoryTime по версиям.</p></div></div>
       <article class="history-card">
-        <span class="history-version">v1.3 · Текущая версия</span>
+        <span class="history-version">v1.4 · Текущая версия</span>
+        <h3>Редакторы, связи и персонализация</h3>
+        <ul>
+          <li>Добавлены настройки размера шрифта, ширины текста, межстрочного интервала и плотности интерфейса.</li>
+          <li>Появилась интерактивная схема отношений персонажей: друзья, враги, родственники, коллеги, предательство, романтические связи и другие типы.</li>
+          <li>Расширен редактор персонажа: возраст, пол/гендер, раса, происхождение, друзья, враги, родственники, союзники, внешность, мотивация и биография.</li>
+          <li>Добавлены наборы имён по культурам, историческим эпохам и вымышленным народам.</li>
+        </ul>
+      </article>
+      <article class="history-card">
+        <span class="history-version">v1.3</span>
         <h3>Больше возможностей и настройки оформления</h3>
         <ul>
           <li>Добавлены тёмно-синяя, тёмно-зелёная, тёмно-красная и тёмно-фиолетовая темы.</li>
@@ -212,7 +278,7 @@
   </main>
 
   <footer class="footer">
-    <p>StoryTime v1.3 · Автор StoryTime: <strong>Zero/Pelmen_4000</strong></p>
+    <p>StoryTime v1.4 · Автор StoryTime: <strong>Zero/Pelmen_4000</strong></p>
     <p><a href="#updates" data-open-tab="updates">История обновлений</a> · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
   </footer>
 
